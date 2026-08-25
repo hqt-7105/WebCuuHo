@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import { useRoute } from 'vue-router'
+import type { MapLayerKey, LayerTab } from '@/types'
+
+defineEmits<{ openReport: [] }>()
+
+const route = useRoute()
+
+const tabs: LayerTab[] = [
+  { key: 'ranh-gioi', label: 'Ranh giới' },
+  { key: 'diem-cuutro', label: 'Điểm cứu trợ' },
+  { key: 'bao-cao', label: 'Báo cáo sự cố' }
+]
+
+function isActive(key: MapLayerKey): boolean {
+  const current = (route.query.layer as string) || 'ranh-gioi'
+  return current === key
+}
+</script>
+
+<template>
+  <header class="map-top">
+    <RouterLink to="/" class="map-back" aria-label="Về trang chủ">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 3L5 9L11 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="brand">Bản Đồ Cứu Trợ Lâm Đồng</span>
+    </RouterLink>
+    <nav class="layer-tabs">
+      <RouterLink
+        v-for="tab in tabs"
+        :key="tab.key"
+        :to="{ path: '/map', query: { layer: tab.key } }"
+        :class="{ active: isActive(tab.key) }"
+      >
+        {{ tab.label }}
+      </RouterLink>
+    </nav>
+    <button class="btn btn-primary sos-btn" @click="$emit('openReport')">Gửi báo cáo</button>
+  </header>
+</template>
