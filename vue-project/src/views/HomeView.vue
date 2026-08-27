@@ -21,7 +21,8 @@ import HighlightFeatures from '@/components/HighlightFeatures.vue'
       <h1>Định vị cứu trợ <em>nhanh hơn</em> trên bản đồ tỉnh Lâm Đồng</h1>
       <p>Nền tảng tổng hợp ranh giới hành chính, điểm cứu trợ và cảnh báo khu vực nguy hiểm cho 124 xã, phường thuộc Lâm Đồng — từ cao nguyên Đà Lạt đến duyên hải Bình Thuận cũ.</p>
       <div class="hero-actions">
-        <RouterLink to="/map" class="btn btn-primary">Xem bản đồ cứu trợ</RouterLink>
+        <!-- <RouterLink to="/map" class="btn btn-primary">Xem bản đồ cứu trợ</RouterLink> -->
+         <a href="#ban-do" class="btn btn-primary">Xem bản đồ cứu trợ</a>
         <a href="#quy-trinh" class="btn btn-ghost">Cách hoạt động</a>
       </div>
     </div>

@@ -1,5 +1,17 @@
 <script setup lang="ts">
-defineProps<{ soDiem: number }>()
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useMapDataStore } from '@/stores/mapData'
+import type { MapLayerKey } from '@/types'
+
+// Trước đây component này nhận soDiem qua props từ MapView.vue (phải truyền tay).
+// Giờ tự đọc thẳng từ Pinia store — MapView.vue không cần biết MapStats tồn tại
+// hay cần dữ liệu gì nữa, giảm phụ thuộc giữa các component.
+const route = useRoute()
+const activeLayer = computed<MapLayerKey>(() => (route.query.layer as MapLayerKey) || 'ranh-gioi')
+
+const store = useMapDataStore()
+const soDiem = computed(() => store.soDiemTheoLop(activeLayer.value))
 </script>
 
 <template>

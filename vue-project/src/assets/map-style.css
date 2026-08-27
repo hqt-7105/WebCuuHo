@@ -64,6 +64,33 @@
 .pin-popup b{ display:block; font-family:'Fraunces',serif; font-size:14px; margin-bottom:2px; }
 .pin-popup span{ font-size:12px; color:rgba(42,42,36,0.65); }
 
+/* marker tuỳ chỉnh (L.divIcon) — ghi đè style mặc định Leaflet gắn cho mọi div icon */
+.custom-marker-pin{
+  background:transparent !important;
+  border:none !important;
+  filter:drop-shadow(0 3px 4px rgba(0,0,0,0.28));
+  transition:transform .15s ease;
+}
+.custom-marker-pin:hover{ transform:scale(1.12); z-index:1000 !important; }
+
+/* vòng nhấp nháy cảnh báo cho báo cáo mức Khẩn cấp — hiệu ứng CSS này KHÔNG làm được
+   với circleMarker cũ vì circleMarker không phải phần tử HTML thật. */
+.custom-marker-pin--khan::before{
+  content:"";
+  position:absolute;
+  left:50%; top:14px;
+  width:30px; height:30px;
+  margin-left:-15px; margin-top:-15px;
+  border-radius:50%;
+  background:rgba(168,70,43,0.35);
+  animation:pulse-marker 1.6s ease-out infinite;
+  z-index:-1;
+}
+@keyframes pulse-marker{
+  0%{ transform:scale(0.6); opacity:0.9; }
+  100%{ transform:scale(1.8); opacity:0; }
+}
+
 /* modal gửi báo cáo */
 .modal-overlay{
   position:fixed; inset:0; z-index:2000;
@@ -104,3 +131,27 @@
   #map{ padding-top:132px; }
   .stat-note{ display:none; }
 }
+
+/* ---------- marker dạng icon (thay chấm tròn cũ) ---------- */
+.custom-marker-icon{ background:transparent; border:none; }
+.marker-pin{
+  width:32px; height:32px; border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 8px rgba(0,0,0,0.3); border:2px solid #fff;
+}
+.marker-pin svg{ width:15px; height:15px; transform:rotate(45deg); }
+
+/* ---------- nội dung popup — component Vue thật, không còn chuỗi HTML tĩnh ---------- */
+.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }
+.marker-popup-card b{ font-family:'Fraunces',serif; font-size:14px; color:var(--ink); }
+.marker-popup-card > span:not(.popup-badge){ font-size:12px; color:rgba(42,42,36,0.65); }
+.popup-badge{
+  align-self:flex-start; background:rgba(168,70,43,0.12); color:var(--clay);
+  font-size:11px; padding:2px 9px; border-radius:999px; margin-top:2px;
+}
+.popup-action-btn{
+  margin-top:8px; padding:7px 12px; border-radius:8px; border:1px solid var(--line);
+  background:#fff; font-size:12px; cursor:pointer; color:var(--ink); transition:background .15s ease;
+}
+.popup-action-btn:hover{ background:var(--fog-dim); }
