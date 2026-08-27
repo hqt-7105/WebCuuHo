@@ -61,6 +61,10 @@
 
 /* popup marker tuỳ biến */
 .leaflet-popup-content-wrapper{ border-radius:10px; }
+/* Leaflet tự set font Helvetica cho .leaflet-container, đè lên font Inter của toàn trang.
+   Ép font-family cho MỌI thẻ con bên trong popup (dấu * ) — không dựa vào kế thừa CSS
+   nữa, để chắc chắn không thẻ nào lọt lưới dù cấu trúc DOM bên trong có ra sao. */
+.leaflet-popup-content, .leaflet-popup-content *{ font-family:'Inter', sans-serif; }
 .pin-popup b{ display:block; font-family:'Fraunces',serif; font-size:14px; margin-bottom:2px; }
 .pin-popup span{ font-size:12px; color:rgba(42,42,36,0.65); }
 
@@ -143,7 +147,7 @@
 .marker-pin svg{ width:15px; height:15px; transform:rotate(45deg); }
 
 /* ---------- nội dung popup — component Vue thật, không còn chuỗi HTML tĩnh ---------- */
-.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }
+.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }  
 .marker-popup-card b{ font-family:'Fraunces',serif; font-size:14px; color:var(--ink); }
 .marker-popup-card > span:not(.popup-badge){ font-size:12px; color:rgba(42,42,36,0.65); }
 .popup-badge{

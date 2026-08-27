@@ -37,7 +37,7 @@ export function useLeafletMap() {
 
     // Container rỗng đưa cho Leaflet — Vue sẽ "bơm" nội dung thật vào đây lúc popup mở.
     const popupContainer = document.createElement('div')
-    marker.bindPopup(popupContainer)
+    marker.bindPopup(popupContainer, { minWidth: 170 })
 
     marker.on('popupopen', () => {
       const vnode = h(MarkerPopupCard, {
@@ -54,6 +54,11 @@ export function useLeafletMap() {
         }
       })
       render(vnode, popupContainer)
+      // Leaflet đo kích thước popup NGAY lúc mở — nhưng lúc đó Vue chưa kịp bơm nội dung
+      // vào (dòng render() ở trên chạy SAU khi Leaflet đã đo xong div rỗng). Nếu không gọi
+      // update() ở đây, Leaflet giữ nguyên kích thước cũ (quá nhỏ), khiến chữ tràn ra ngoài
+      // khung trắng. update() bảo Leaflet đo lại đúng kích thước sau khi có nội dung thật.
+      marker.getPopup()?.update()
     })
 
     // BẮT BUỘC gỡ component khi popup đóng — không gỡ sẽ rò rỉ bộ nhớ vì Vue vẫn giữ
