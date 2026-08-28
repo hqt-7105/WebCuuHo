@@ -147,7 +147,7 @@
 .marker-pin svg{ width:15px; height:15px; transform:rotate(45deg); }
 
 /* ---------- nội dung popup — component Vue thật, không còn chuỗi HTML tĩnh ---------- */
-.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }  
+.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }
 .marker-popup-card b{ font-family:'Fraunces',serif; font-size:14px; color:var(--ink); }
 .marker-popup-card > span:not(.popup-badge){ font-size:12px; color:rgba(42,42,36,0.65); }
 .popup-badge{
@@ -159,3 +159,14 @@
   background:#fff; font-size:12px; cursor:pointer; color:var(--ink); transition:background .15s ease;
 }
 .popup-action-btn:hover{ background:var(--fog-dim); }
+
+/* ---------- chỉ báo trạng thái kết nối Socket.IO ---------- */
+.socket-status{
+  position:fixed; right:45px; bottom: 25px; z-index:900;
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,0.94); border-radius:999px; padding:8px 14px;
+  font-size:10px; color:rgba(42,42,36,0.6); box-shadow:0 8px 20px rgba(0,0,0,0.1);
+}
+.socket-status .dot{ width:7px; height:7px; border-radius:50%; background:var(--clay); flex-shrink:0; }
+.socket-status.connected .dot{ background:var(--sage); }
+.socket-status.connected{ color:var(--pine); }

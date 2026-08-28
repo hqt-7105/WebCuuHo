@@ -8,6 +8,7 @@ export interface AppConfig {
     diemCuuTro: string
     baoCaoSuCo: string
   }
+  socketUrl: string
 }
 
 export const CONFIG: AppConfig = {
@@ -17,5 +18,8 @@ export const CONFIG: AppConfig = {
     ranhGioi: '/ranhgioi',
     diemCuuTro: '/diem-cuutro',
     baoCaoSuCo: '/baocao-sucao'
-  }
+  },
+  // Cổng 4000 CHỈ dùng cho server test tạm thời (xem socket-test-server/README.md).
+  // Khi có backend Socket.IO thật, đổi thành đúng địa chỉ server thật ở đây.
+  socketUrl: 'http://localhost:4000'
 }

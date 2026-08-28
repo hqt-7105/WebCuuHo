@@ -4,8 +4,10 @@ import { useRoute } from 'vue-router'
 import 'leaflet/dist/leaflet.css'
 import '@/assets/map-style.css'
 import { useLeafletMap } from '@/composables/useLeafletMap'
+import { useSocket } from '@/composables/useSocket'
 import { useMapDataStore } from '@/stores/mapData'
 import { useToastStore } from '@/stores/toast'
+import { CONFIG } from '@/config'
 import type { MapLayerKey } from '@/types'
 import MapTopBar from '@/components/map/MapTopBar.vue'
 import MapStats from '@/components/map/MapStats.vue'
@@ -72,6 +74,18 @@ watch(boundaryError, (msg) => {
   if (msg) toastStore.showToast(msg)
 })
 
+// ---------- Socket.IO — cập nhật thời gian thực ----------
+// onBaoCaoMoi tái dùng ĐÚNG luồng xử lý đã có (store + marker) — không viết logic riêng
+// biệt cho "báo cáo tới từ socket" so với "báo cáo tự mình gửi", tránh 2 đường code
+// làm cùng 1 việc mà dễ lệch nhau khi sửa sau này.
+const { isConnected, connect } = useSocket({
+  onBaoCaoMoi: (data) => {
+    mapDataStore.themBaoCao(data)
+    themMarkerBaoCao(data, activeLayer.value)
+    toastStore.showToast(`Có báo cáo mới: ${data.ten}`)
+  }
+})
+
 // ---------- Khởi tạo / dọn dẹp bản đồ theo vòng đời component ----------
 onMounted(async () => {
   const map = await initMap('map', activeLayer.value)
@@ -80,6 +94,7 @@ onMounted(async () => {
     pickedLatLng.value = { lat: e.latlng.lat, lng: e.latlng.lng }
     pickedLocationText.value = `Đã chọn: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`
   })
+  connect(CONFIG.socketUrl)
 })
 onUnmounted(() => destroyMap())
 
@@ -95,6 +110,9 @@ watch(activeLayer, (layer) => {
     <MapStats />
     <div id="map"></div>
     <MapLegend />
+    <div class="socket-status" :class="{ connected: isConnected }">
+      <span class="dot"></span>{{ isConnected ? 'Cập nhật thời gian thực: đang bật' : 'Cập nhật thời gian thực: chưa kết nối' }}
+    </div>
     <ReportModal
       :is-open="isReportOpen"
       :picked-location-text="pickedLocationText"

@@ -59,14 +59,18 @@ function handleClose() {
           </select>
         </label>
         <label>
+          <br>
           Số điện thoại liên hệ *
           <input v-model="form.phone" type="tel" required placeholder="09xxxxxxxx">
         </label>
         <label>
+          <br>
           Nội dung mô tả *
+          <br>
           <textarea v-model="form.description" required rows="3" placeholder="Mô tả ngắn tình hình, số người cần hỗ trợ..."></textarea>
         </label>
         <label>
+          <br>
           Vị trí
           <span class="hint">{{ pickedLocationText }}</span>
         </label>
