@@ -7,6 +7,7 @@ import { useLeafletMap } from '@/composables/useLeafletMap'
 import { useSocket } from '@/composables/useSocket'
 import { useMapDataStore } from '@/stores/mapData'
 import { useToastStore } from '@/stores/toast'
+import { useOfflineQueueStore } from '@/stores/offlineQueue'
 import { CONFIG } from '@/config'
 import type { MapLayerKey } from '@/types'
 import MapTopBar from '@/components/map/MapTopBar.vue'
@@ -19,6 +20,7 @@ const activeLayer = computed<MapLayerKey>(() => (route.query.layer as MapLayerKe
 
 const mapDataStore = useMapDataStore()
 const toastStore = useToastStore()
+const offlineQueueStore = useOfflineQueueStore()
 
 const { mapInstance, boundaryError, initMap, applyLayerVisibility, themMarkerBaoCao, destroyMap } =
   useLeafletMap()
@@ -63,11 +65,21 @@ function handleSubmitReport(data: SubmittedForm) {
     mucDo: 'Khẩn cấp',
     mau: '#a8462b'
   }
-  mapDataStore.themBaoCao(baoCaoMoi)
-  themMarkerBaoCao(baoCaoMoi, activeLayer.value)
 
   closeReport()
-  toastStore.showToast('Đã ghi nhận báo cáo (demo — chưa nối backend thật).')
+
+  // ĐIỂM RẼ NHÁNH quan trọng nhất của offline queue: cùng 1 hành động "gửi báo cáo"
+  // nhưng xử lý khác hẳn nhau tuỳ có mạng hay không.
+  if (navigator.onLine) {
+    mapDataStore.themBaoCao(baoCaoMoi)
+    themMarkerBaoCao(baoCaoMoi, activeLayer.value)
+    toastStore.showToast('Đã ghi nhận báo cáo (demo — chưa nối backend thật).')
+  } else {
+    // Mất mạng: KHÔNG hiển thị lên bản đồ ngay — báo cáo này chưa từng "được gửi" cả,
+    // chỉ đang nằm chờ trên máy người dùng. Nó sẽ tự hiện lên khi có mạng trở lại.
+    offlineQueueStore.themBaoCaoVaoHangDoi(baoCaoMoi)
+    toastStore.showToast('Đang mất mạng — đã lưu báo cáo, sẽ tự gửi khi có mạng trở lại.')
+  }
 }
 
 watch(boundaryError, (msg) => {
@@ -95,6 +107,9 @@ onMounted(async () => {
     pickedLocationText.value = `Đã chọn: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`
   })
   connect(CONFIG.socketUrl)
+  // Khi có mạng trở lại, mỗi báo cáo trong hàng đợi sẽ được "gửi" theo đúng luồng
+  // themMarkerBaoCao() có sẵn — tái dùng, không viết logic vẽ marker riêng lần 2.
+  offlineQueueStore.khoiTao((baoCao) => themMarkerBaoCao(baoCao, activeLayer.value))
 })
 onUnmounted(() => destroyMap())
 
@@ -112,6 +127,9 @@ watch(activeLayer, (layer) => {
     <MapLegend />
     <div class="socket-status" :class="{ connected: isConnected }">
       <span class="dot"></span>{{ isConnected ? 'Cập nhật thời gian thực: đang bật' : 'Cập nhật thời gian thực: chưa kết nối' }}
+    </div>
+    <div v-if="offlineQueueStore.soLuongChoGui > 0" class="offline-badge">
+      <span class="dot"></span>{{ offlineQueueStore.soLuongChoGui }} báo cáo đang chờ gửi
     </div>
     <ReportModal
       :is-open="isReportOpen"

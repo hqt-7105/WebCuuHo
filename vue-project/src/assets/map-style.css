@@ -128,45 +128,32 @@
 }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-@media (max-width:760px){
-  .map-top{ flex-wrap:wrap; gap:10px; padding:12px 16px; }
-  .layer-tabs{ order:3; width:100%; overflow-x:auto; }
-  .map-stats{ top:96px; }
-  #map{ padding-top:132px; }
-  .stat-note{ display:none; }
+/* ============ MOBILE FIRST cho trang /map ============ */
+
+.map-top{ flex-wrap:wrap; gap:10px; padding:12px 16px; }
+.layer-tabs{ order:3; width:100%; overflow-x:auto; }
+.map-stats{ top:96px; }
+#map{ padding-top:132px; }
+.stat-note{ display:none; }
+
+/* Modal full-width có lề, không dính sát mép màn hình nhỏ */
+.modal-card{ margin:0 16px; width:calc(100% - 32px); }
+
+/* Input to hơn 16px để Safari iOS không tự zoom khi chạm vào ô nhập */
+#reportForm input, #reportForm select, #reportForm textarea{ font-size:16px; }
+
+/* Nút zoom Leaflet to hơn cho ngón tay */
+.leaflet-control-zoom a{
+  width:40px !important; height:40px !important;
+  line-height:40px !important; font-size:20px !important;
 }
 
-/* ---------- marker dạng icon (thay chấm tròn cũ) ---------- */
-.custom-marker-icon{ background:transparent; border:none; }
-.marker-pin{
-  width:32px; height:32px; border-radius:50% 50% 50% 0;
-  transform:rotate(-45deg);
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 3px 8px rgba(0,0,0,0.3); border:2px solid #fff;
+/* ============ TỪ TABLET NGANG TRỞ LÊN (≥1024px) — quay lại layout gốc ============ */
+@media (min-width:1024px){
+  .map-top{ flex-wrap:nowrap; padding:14px 24px; }
+  .layer-tabs{ order:0; width:auto; overflow-x:visible; }
+  .map-stats{ top:60px; }
+  #map{ padding-top:96px; }
+  .stat-note{ display:inline; }
+  .modal-card{ margin:0; width:100%; }
 }
-.marker-pin svg{ width:15px; height:15px; transform:rotate(45deg); }
-
-/* ---------- nội dung popup — component Vue thật, không còn chuỗi HTML tĩnh ---------- */
-.marker-popup-card{ display:flex; flex-direction:column; gap:4px; min-width:170px; }
-.marker-popup-card b{ font-family:'Fraunces',serif; font-size:14px; color:var(--ink); }
-.marker-popup-card > span:not(.popup-badge){ font-size:12px; color:rgba(42,42,36,0.65); }
-.popup-badge{
-  align-self:flex-start; background:rgba(168,70,43,0.12); color:var(--clay);
-  font-size:11px; padding:2px 9px; border-radius:999px; margin-top:2px;
-}
-.popup-action-btn{
-  margin-top:8px; padding:7px 12px; border-radius:8px; border:1px solid var(--line);
-  background:#fff; font-size:12px; cursor:pointer; color:var(--ink); transition:background .15s ease;
-}
-.popup-action-btn:hover{ background:var(--fog-dim); }
-
-/* ---------- chỉ báo trạng thái kết nối Socket.IO ---------- */
-.socket-status{
-  position:fixed; right:45px; bottom: 25px; z-index:900;
-  display:flex; align-items:center; gap:8px;
-  background:rgba(255,255,255,0.94); border-radius:999px; padding:8px 14px;
-  font-size:10px; color:rgba(42,42,36,0.6); box-shadow:0 8px 20px rgba(0,0,0,0.1);
-}
-.socket-status .dot{ width:7px; height:7px; border-radius:50%; background:var(--clay); flex-shrink:0; }
-.socket-status.connected .dot{ background:var(--sage); }
-.socket-status.connected{ color:var(--pine); }

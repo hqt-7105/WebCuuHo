@@ -155,14 +155,43 @@
   .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
   .reveal.in{opacity:1; transform:none;}
 
-  @media (max-width:860px){
-    .nav-links, .nav-cta .btn-ghost{display:none;}
-    .menu-btn{display:block;}
-    .feat-grid, .feat2-grid{grid-template-columns:1fr;}
-    .steps{grid-template-columns:1fr; gap:36px;}
-    .steps::before{display:none;}
-    .coverage .wrap{grid-template-columns:1fr; gap:32px;}
-    .coverage-figures{grid-template-columns:1fr 1fr;}
-    section{padding:64px 0;}
-    .hero{padding:140px 0 80px;}
-  }
+ /* ============ MOBILE FIRST — mặc định áp dụng cho MỌI màn hình ============ */
+
+/* Header/Nav: ẩn menu ngang, hiện nút hamburger mặc định */
+.nav-links, .nav-cta .btn-ghost{ display:none; }
+.menu-btn{ display:block; }
+
+/* Grid 3 cột -> mặc định xếp dọc 1 cột trên điện thoại */
+.feat-grid, .feat2-grid{ grid-template-columns:1fr; }
+.steps{ grid-template-columns:1fr; gap:36px; }
+.steps::before{ display:none; }
+.coverage .wrap{ grid-template-columns:1fr; gap:32px; }
+.coverage-figures{ grid-template-columns:1fr 1fr; }
+
+/* Padding/kích thước co lại cho màn nhỏ */
+section{ padding:56px 0; }
+.hero{ padding:130px 0 70px; }
+.wrap{ padding:0 20px; }
+
+/* Bấm nút to hơn cho ngón tay (chuẩn touch target 44px) */
+.btn{ padding:14px 22px; }
+
+/* ============ TABLET (≥768px) — mở rộng dần lên ============ */
+@media (min-width:768px){
+  .feat2-grid{ grid-template-columns:repeat(2,1fr); }
+  .coverage-figures{ grid-template-columns:repeat(2,1fr); }
+  section{ padding:72px 0; }
+}
+
+/* ============ DESKTOP (≥1024px) — quay về layout gốc như thiết kế ban đầu ============ */
+@media (min-width:1024px){
+  .nav-links, .nav-cta .btn-ghost{ display:flex; }
+  .menu-btn{ display:none; }
+  .feat-grid, .feat2-grid{ grid-template-columns:repeat(3,1fr); }
+  .steps{ grid-template-columns:repeat(3,1fr); gap:0; }
+  .steps::before{ display:block; }
+  .coverage .wrap{ grid-template-columns:1fr 1fr; gap:60px; }
+  section{ padding:96px 0; }
+  .hero{ padding:180px 0 120px; }
+  .wrap{ padding:0 28px; }
+}

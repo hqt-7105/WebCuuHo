@@ -23,7 +23,8 @@ const isMenuOpen = ref(false)
         <a href="#tinh-nang">Tính năng</a>
       </nav>
       <div class="nav-cta">
-        <RouterLink to="/map" class="btn btn-ghost">Xem bản đồ</RouterLink>
+        <!-- <RouterLink to="/map" class="btn btn-ghost">Xem bản đồ</RouterLink> -->
+         <a href="#ban-do" class="btn btn-primary">Xem bản đồ cứu trợ</a>
       </div>
       <button class="menu-btn" aria-label="Mở menu" @click="isMenuOpen = !isMenuOpen">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 6H19M3 11H19M3 16H19" stroke="#2a2a24" stroke-width="1.6" stroke-linecap="round"/></svg>
