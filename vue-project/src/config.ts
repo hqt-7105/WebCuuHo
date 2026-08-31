@@ -12,14 +12,11 @@ export interface AppConfig {
 }
 
 export const CONFIG: AppConfig = {
-  // Ví dụ sau này: "https://api.bandocuutro-lamdong.vn"
-  apiBaseUrl: 'http://localhost:3000/api',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   endpoints: {
     ranhGioi: '/ranhgioi',
     diemCuuTro: '/diem-cuutro',
     baoCaoSuCo: '/baocao-sucao'
   },
-  // Cổng 4000 CHỈ dùng cho server test tạm thời (xem socket-test-server/README.md).
-  // Khi có backend Socket.IO thật, đổi thành đúng địa chỉ server thật ở đây.
-  socketUrl: 'http://localhost:4000'
+  socketUrl: import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000'
 }

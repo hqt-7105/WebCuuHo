@@ -6,6 +6,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { DiemCuuTro, BaoCaoSuCo, MapLayerKey } from '@/types'
+import { fetchDiemCuuTro as apiFetchDiemCuuTro } from '@/services/diemCuuTroService'
 
 export const useMapDataStore = defineStore('mapData', () => {
   // TOẠ ĐỘ THẬT của các đô thị trong tỉnh, NỘI DUNG là dữ liệu minh hoạ cho đồ án.
@@ -17,7 +18,20 @@ export const useMapDataStore = defineStore('mapData', () => {
     { ten: 'Trạm y tế Gia Nghĩa', lat: 12.0044, lng: 107.6877, loai: 'Điểm tiếp nhận', mau: '#1f3d2e' },
     { ten: 'Nhà văn hoá Đức Trọng', lat: 11.7583, lng: 108.4267, loai: 'Điểm tiếp nhận', mau: '#1f3d2e' }
   ])
+  const dangTaiDiemCuuTro = ref(false)
 
+  async function taiDiemCuuTroTuServer() {
+    dangTaiDiemCuuTro.value = true
+    try {
+      const data = await apiFetchDiemCuuTro()
+      diemCuuTro.value = data
+    } catch {
+      // Interceptor ở http.ts đã tự hiện toast báo lỗi — giữ nguyên dữ liệu mock
+      // cũ làm fallback, không xoá trắng danh sách khi API lỗi.
+    } finally {
+      dangTaiDiemCuuTro.value = false
+    }
+  }
   // Vị trí minh hoạ ban đầu — báo cáo người dùng gửi thật (qua ReportModal) sẽ được
   // action themBaoCao() nối thêm vào đây, KHÔNG thay thế mảng minh hoạ này.
   const baoCaoSuCo = ref<BaoCaoSuCo[]>([
@@ -45,5 +59,9 @@ export const useMapDataStore = defineStore('mapData', () => {
     baoCaoSuCo.value = baoCaoSuCo.value.filter((b) => b !== baoCao)
   }
 
-  return { diemCuuTro, baoCaoSuCo, soDiemTheoLop, themBaoCao, xacNhanDaXuLy }
+    return {
+    diemCuuTro, baoCaoSuCo, soDiemTheoLop,
+    themBaoCao, xacNhanDaXuLy,
+    dangTaiDiemCuuTro, taiDiemCuuTroTuServer
+  }
 })

@@ -9,7 +9,7 @@ import type { BaoCaoSuCo } from '@/types'
 import { themVaoHangDoi, layToanBoHangDoi, xoaKhoiHangDoi } from '@/utils/offlineQueue'
 import { useMapDataStore } from './mapData'
 import { useToastStore } from './toast'
-
+import { guiBaoCaoSuCo } from '@/services/baoCaoService'
 export const useOfflineQueueStore = defineStore('offlineQueue', () => {
   const soLuongChoGui = ref(0)
   const dangOffline = ref(!navigator.onLine)
@@ -36,22 +36,31 @@ export const useOfflineQueueStore = defineStore('offlineQueue', () => {
   // chưa có backend thật: coi như gửi thành công ngay, thêm vào mapDataStore để
   // hiển thị lên bản đồ), rồi xoá khỏi hàng đợi. Khi có backend thật, thay đúng
   // đoạn "coi như gửi thành công" bằng lệnh fetch POST thật, giữ nguyên phần còn lại.
-  async function xuLyHangDoiKhiCoMang(themLenBanDo: (baoCao: BaoCaoSuCo) => void) {
+    async function xuLyHangDoiKhiCoMang(themLenBanDo: (baoCao: BaoCaoSuCo) => void) {
     const list = await layToanBoHangDoi()
     if (list.length === 0) return
 
     const mapDataStore = useMapDataStore()
     const toastStore = useToastStore()
+    let soLuongThanhCong = 0
 
     for (const item of list) {
       const { localId, taoLuc, ...baoCao } = item
-      void taoLuc // chỉ dùng để hiển thị sau này nếu cần, chưa dùng tới ở bước này
-      mapDataStore.themBaoCao(baoCao)
-      themLenBanDo(baoCao)
-      await xoaKhoiHangDoi(localId)
+      void taoLuc
+      try {
+        const daLuu = await guiBaoCaoSuCo(baoCao)
+        mapDataStore.themBaoCao(daLuu)
+        themLenBanDo(daLuu)
+        await xoaKhoiHangDoi(localId)
+        soLuongThanhCong++
+      } catch {
+        // Gửi lại thất bại — giữ nguyên item trong hàng đợi, thử lại lần 'online' kế tiếp.
+      }
     }
 
-    toastStore.showToast(`Đã tự động gửi ${list.length} báo cáo lưu tạm lúc mất mạng.`)
+    if (soLuongThanhCong > 0) {
+      toastStore.showToast(`Đã tự động gửi ${soLuongThanhCong} báo cáo lưu tạm lúc mất mạng.`)
+    }
     await capNhatSoLuong()
   }
 

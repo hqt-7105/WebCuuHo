@@ -14,6 +14,7 @@ import MapTopBar from '@/components/map/MapTopBar.vue'
 import MapStats from '@/components/map/MapStats.vue'
 import MapLegend from '@/components/map/MapLegend.vue'
 import ReportModal from '@/components/map/ReportModal.vue'
+import { guiBaoCaoSuCo } from '@/services/baoCaoService'
 
 const route = useRoute()
 const activeLayer = computed<MapLayerKey>(() => (route.query.layer as MapLayerKey) || 'ranh-gioi')
@@ -50,14 +51,9 @@ interface SubmittedForm {
   description: string
 }
 
-function handleSubmitReport(data: SubmittedForm) {
-  // Chưa có backend thật — đây là nơi sau này gọi thêm:
-  // fetch(CONFIG.apiBaseUrl + CONFIG.endpoints.baoCaoSuCo, { method: 'POST', body: JSON.stringify(data) })
-  const viTri = pickedLatLng.value ?? { lat: 11.94, lng: 108.44 } // mặc định: trung tâm tỉnh
+async function handleSubmitReport(data: SubmittedForm) {
+  const viTri = pickedLatLng.value ?? { lat: 11.94, lng: 108.44 }
 
-  // Tạo ĐÚNG 1 object dùng chung cho cả store và marker — nếu tạo 2 object riêng
-  // (dù nội dung giống hệt), sau này "Đánh dấu đã xử lý" sẽ không khớp được đúng phần tử
-  // trong store, vì store.xacNhanDaXuLy() so khớp theo tham chiếu, không so theo nội dung.
   const baoCaoMoi = {
     ten: data.reqType || 'Yêu cầu cứu trợ',
     lat: viTri.lat,
@@ -68,20 +64,23 @@ function handleSubmitReport(data: SubmittedForm) {
 
   closeReport()
 
-  // ĐIỂM RẼ NHÁNH quan trọng nhất của offline queue: cùng 1 hành động "gửi báo cáo"
-  // nhưng xử lý khác hẳn nhau tuỳ có mạng hay không.
   if (navigator.onLine) {
-    mapDataStore.themBaoCao(baoCaoMoi)
-    themMarkerBaoCao(baoCaoMoi, activeLayer.value)
-    toastStore.showToast('Đã ghi nhận báo cáo (demo — chưa nối backend thật).')
+    try {
+      const daLuu = await guiBaoCaoSuCo(baoCaoMoi)
+      mapDataStore.themBaoCao(daLuu)
+      themMarkerBaoCao(daLuu, activeLayer.value)
+      toastStore.showToast('Đã gửi báo cáo thành công.')
+    } catch {
+      offlineQueueStore.themBaoCaoVaoHangDoi(baoCaoMoi)
+      toastStore.showToast('Gửi thất bại — đã lưu tạm, sẽ tự gửi lại sau.')
+    }
   } else {
-    // Mất mạng: KHÔNG hiển thị lên bản đồ ngay — báo cáo này chưa từng "được gửi" cả,
-    // chỉ đang nằm chờ trên máy người dùng. Nó sẽ tự hiện lên khi có mạng trở lại.
     offlineQueueStore.themBaoCaoVaoHangDoi(baoCaoMoi)
     toastStore.showToast('Đang mất mạng — đã lưu báo cáo, sẽ tự gửi khi có mạng trở lại.')
   }
 }
 
+  closeReport()
 watch(boundaryError, (msg) => {
   if (msg) toastStore.showToast(msg)
 })
@@ -101,6 +100,7 @@ const { isConnected, connect } = useSocket({
 // ---------- Khởi tạo / dọn dẹp bản đồ theo vòng đời component ----------
 onMounted(async () => {
   const map = await initMap('map', activeLayer.value)
+    mapDataStore.taiDiemCuuTroTuServer()
   map.on('click', (e) => {
     if (!pickMode.value) return
     pickedLatLng.value = { lat: e.latlng.lat, lng: e.latlng.lng }
