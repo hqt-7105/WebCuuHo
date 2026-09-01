@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import InstallButton from '@/components/InstallButton.vue'
 
 // Thay cho đoạn thao tác style.cssText trực tiếp trong script.js cũ,
 // giờ dùng state phản ứng (reactive state) của Vue — idiomatic hơn.
@@ -25,6 +26,7 @@ const isMenuOpen = ref(false)
       <div class="nav-cta">
         <!-- <RouterLink to="/map" class="btn btn-ghost">Xem bản đồ</RouterLink> -->
          <a href="#ban-do" class="btn btn-primary">Xem bản đồ cứu trợ</a>
+        <InstallButton />
       </div>
       <button class="menu-btn" aria-label="Mở menu" @click="isMenuOpen = !isMenuOpen">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 6H19M3 11H19M3 16H19" stroke="#2a2a24" stroke-width="1.6" stroke-linecap="round"/></svg>

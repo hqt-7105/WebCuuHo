@@ -74,8 +74,14 @@
   border:none !important;
   filter:drop-shadow(0 3px 4px rgba(0,0,0,0.28));
   transition:transform .15s ease;
+  animation: marker-drop-in .35s ease-out; /* chạy 1 lần duy nhất lúc marker vừa gắn vào bản đồ */
 }
 .custom-marker-pin:hover{ transform:scale(1.12); z-index:1000 !important; }
+@keyframes marker-drop-in{
+  0%{ transform:translateY(-18px) scale(0.6); opacity:0; }
+  60%{ transform:translateY(2px) scale(1.05); opacity:1; }
+  100%{ transform:translateY(0) scale(1); }
+}
 
 /* vòng nhấp nháy cảnh báo cho báo cáo mức Khẩn cấp — hiệu ứng CSS này KHÔNG làm được
    với circleMarker cũ vì circleMarker không phải phần tử HTML thật. */

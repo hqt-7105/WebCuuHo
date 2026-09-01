@@ -80,7 +80,6 @@ async function handleSubmitReport(data: SubmittedForm) {
   }
 }
 
-  closeReport()
 watch(boundaryError, (msg) => {
   if (msg) toastStore.showToast(msg)
 })
