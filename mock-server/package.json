@@ -1,0 +1,13 @@
+{
+  "name": "mock-server",
+  "private": true,
+  "description": "Server GIẢ, CHỈ để tự kiểm tra useSocket.ts phía frontend. Không phải backend thật của đồ án.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}
